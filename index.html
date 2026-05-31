@@ -362,6 +362,9 @@
     }
 
     .answer-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       min-width: 124px;
       min-height: 50px;
       padding: 12px 24px;
@@ -400,6 +403,9 @@
 
     .no-button.is-floating {
       position: fixed;
+      display: inline-flex;
+      visibility: visible;
+      opacity: 1;
       z-index: 50;
       left: 50%;
       top: 50%;
@@ -801,6 +807,7 @@
 
     let noCount = 0;
     let toastTimer;
+    let lastNoPosition = null;
 
     function makeFloaters() {
       for (let i = 0; i < 26; i++) {
@@ -848,15 +855,36 @@
 
       noCount += 1;
       const margin = 18;
+      noButton.classList.add("is-floating");
+      noButton.style.display = "inline-flex";
+      noButton.style.visibility = "visible";
+      noButton.style.opacity = "1";
+      noButton.style.pointerEvents = "auto";
+
       const buttonWidth = noButton.offsetWidth || 120;
       const buttonHeight = noButton.offsetHeight || 52;
       const maxX = Math.max(margin, window.innerWidth - buttonWidth - margin);
       const maxY = Math.max(margin, window.innerHeight - buttonHeight - margin);
-      const x = margin + Math.random() * (maxX - margin);
-      const y = margin + Math.random() * (maxY - margin);
+      let x = margin;
+      let y = margin;
+
+      for (let attempt = 0; attempt < 12; attempt++) {
+        x = margin + Math.random() * Math.max(1, maxX - margin);
+        y = margin + Math.random() * Math.max(1, maxY - margin);
+
+        if (!lastNoPosition) {
+          break;
+        }
+
+        const distance = Math.hypot(x - lastNoPosition.x, y - lastNoPosition.y);
+        if (distance > 120 || attempt === 11) {
+          break;
+        }
+      }
+
+      lastNoPosition = { x, y };
       const yesScale = Math.min(1 + noCount * 0.08, 1.42);
 
-      noButton.classList.add("is-floating");
       noButton.style.left = x + "px";
       noButton.style.top = y + "px";
       yesButton.style.transform = "scale(" + yesScale + ")";
