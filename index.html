@@ -908,8 +908,6 @@
 
     openLetter.addEventListener("click", openProposal);
     yesButton.addEventListener("click", sayYes);
-    noButton.addEventListener("pointerenter", moveNoButton);
-    noButton.addEventListener("focus", moveNoButton);
     noButton.addEventListener("click", (event) => {
       event.preventDefault();
       moveNoButton();
